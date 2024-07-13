@@ -6,6 +6,10 @@ import (
 	"strconv"
 )
 
+func (w *WebsocketAPIClient) NewPositionInfoService() *PositionInfoService {
+	return &PositionInfoService{websocketAPI: w}
+}
+
 type PositionInfoService struct {
 	websocketAPI *WebsocketAPIClient
 	recvWindow   *int64
@@ -32,7 +36,7 @@ func (s *PositionInfoService) Do(ctx context.Context) (*PositionResponse, error)
 
 	payload := map[string]interface{}{
 		"id":     id,
-		"method": "account.status",
+		"method": "account.position",
 		"params": signedParams,
 	}
 
