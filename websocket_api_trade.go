@@ -222,6 +222,7 @@ type OrderPlacementResult struct {
 	TrailingTime        int64       `json:"trailingTime,omitempty"`
 	Fills               []OrderFill `json:"fills,omitempty"`
 	SelfTradePrevention string      `json:"selfTradePreventionMode,omitempty"`
+	AvgPrice            string      `json:"avgPrice,omitempty"`
 }
 
 type OrderFill struct {
