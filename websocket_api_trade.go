@@ -531,6 +531,7 @@ type OrderStatusResult struct {
 	StrategyType            int64  `json:"strategyType,omitempty"`
 	TrailingDelta           string `json:"trailingDelta,omitempty"`
 	TrailingTime            int64  `json:"trailingTime,omitempty"`
+	AvgPrice                string `json:"avgPrice,omitempty"`
 }
 
 type OrderCancelService struct {
