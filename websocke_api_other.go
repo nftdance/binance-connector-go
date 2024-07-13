@@ -6,12 +6,12 @@ import (
 	"strconv"
 )
 
-func (w *WebsocketAPIClient) NewPositionInfoService() *PositionInfoService {
-	return &PositionInfoService{websocketAPI: w}
+func (c *WebsocketAPIClient) NewPositionInfoService() *PositionInfoService {
+	return &PositionInfoService{websocketAPI: c}
 }
 
-func (w *WebsocketAPIClient) NewFuturesAccountBalanceService() *FuturesAccountBalanceService {
-	return &FuturesAccountBalanceService{websocketAPI: w}
+func (c *WebsocketAPIClient) NewFuturesAccountBalanceService() *FuturesAccountBalanceService {
+	return &FuturesAccountBalanceService{websocketAPI: c}
 }
 
 type PositionInfoService struct {
