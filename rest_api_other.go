@@ -45,8 +45,8 @@ type ChangePositionMode struct {
 	c *Client
 }
 
-func (c *Client) NewChangePositionMode() *GetGetCurrentPositionMode {
-	return &GetGetCurrentPositionMode{c: c}
+func (c *Client) NewChangePositionMode() *ChangePositionMode {
+	return &ChangePositionMode{c: c}
 }
 
 type ChangePositionModeResp struct {
