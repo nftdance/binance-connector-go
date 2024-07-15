@@ -164,6 +164,10 @@ func (c *Client) NewFuturesGetOrderService() *FuturesGetOrderService {
 	return &FuturesGetOrderService{c: c}
 }
 
+func (c *Client) NewFuturesGetBalanceService() *FuturesGetBalanceService {
+	return &FuturesGetBalanceService{c: c}
+}
+
 type FuturesCreateOrderService struct {
 	c                *Client
 	symbol           string
@@ -468,4 +472,28 @@ type Order struct {
 	PriceMatch              string           `json:"priceMatch"`
 	SelfTradePreventionMode string           `json:"selfTradePreventionMode"`
 	GoodTillDate            int64            `json:"goodTillDate"`
+}
+
+// GetBalanceService get account balance
+type FuturesGetBalanceService struct {
+	c *Client
+}
+
+// Do send request
+func (s *FuturesGetBalanceService) Do(ctx context.Context, opts ...RequestOption) (res []*Balance, err error) {
+	r := &request{
+		method:   http.MethodGet,
+		endpoint: "/fapi/v2/balance",
+		secType:  secTypeSigned,
+	}
+	data, err := s.c.callAPI(ctx, r, opts...)
+	if err != nil {
+		return []*Balance{}, err
+	}
+	res = make([]*Balance, 0)
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return []*Balance{}, err
+	}
+	return res, nil
 }
