@@ -155,6 +155,15 @@ const (
 	ForceOrderCloseTypeADL         ForceOrderCloseType = "ADL"
 )
 
+// NewCreateOrderService init creating order service
+func (c *Client) NewFuturesCreateOrderService() *FuturesCreateOrderService {
+	return &FuturesCreateOrderService{c: c}
+}
+
+func (c *Client) NewFuturesGetOrderService() *FuturesGetOrderService {
+	return &FuturesGetOrderService{c: c}
+}
+
 type FuturesCreateOrderService struct {
 	c                *Client
 	symbol           string
