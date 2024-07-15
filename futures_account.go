@@ -168,8 +168,8 @@ func (c *Client) NewFuturesGetBalanceService() *FuturesGetBalanceService {
 	return &FuturesGetBalanceService{c: c}
 }
 
-func (c *Client) GetPositionRiskService() *GetPositionRiskService {
-	return &GetPositionRiskService{c: c}
+func (c *Client) NewFuturesGetPositionRiskService() *FuturesGetPositionRiskService {
+	return &FuturesGetPositionRiskService{c: c}
 }
 
 type FuturesCreateOrderService struct {
@@ -483,8 +483,19 @@ type FuturesGetBalanceService struct {
 	c *Client
 }
 
+// Balance define user balance of your account
+type FuturesBalance struct {
+	AccountAlias       string `json:"accountAlias"`
+	Asset              string `json:"asset"`
+	Balance            string `json:"balance"`
+	CrossWalletBalance string `json:"crossWalletBalance"`
+	CrossUnPnl         string `json:"crossUnPnl"`
+	AvailableBalance   string `json:"availableBalance"`
+	MaxWithdrawAmount  string `json:"maxWithdrawAmount"`
+}
+
 // Do send request
-func (s *FuturesGetBalanceService) Do(ctx context.Context, opts ...RequestOption) (res []*Balance, err error) {
+func (s *FuturesGetBalanceService) Do(ctx context.Context, opts ...RequestOption) (res []*FuturesBalance, err error) {
 	r := &request{
 		method:   http.MethodGet,
 		endpoint: "/fapi/v2/balance",
@@ -492,30 +503,30 @@ func (s *FuturesGetBalanceService) Do(ctx context.Context, opts ...RequestOption
 	}
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
-		return []*Balance{}, err
+		return []*FuturesBalance{}, err
 	}
-	res = make([]*Balance, 0)
+	res = make([]*FuturesBalance, 0)
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		return []*Balance{}, err
+		return []*FuturesBalance{}, err
 	}
 	return res, nil
 }
 
 // GetPositionRiskService get account balance
-type GetPositionRiskService struct {
+type FuturesGetPositionRiskService struct {
 	c      *Client
 	symbol string
 }
 
 // Symbol set symbol
-func (s *GetPositionRiskService) Symbol(symbol string) *GetPositionRiskService {
+func (s *FuturesGetPositionRiskService) Symbol(symbol string) *FuturesGetPositionRiskService {
 	s.symbol = symbol
 	return s
 }
 
 // Do send request
-func (s *GetPositionRiskService) Do(ctx context.Context, opts ...RequestOption) (res []*PositionRisk, err error) {
+func (s *FuturesGetPositionRiskService) Do(ctx context.Context, opts ...RequestOption) (res []*PositionRisk, err error) {
 	r := &request{
 		method:   http.MethodGet,
 		endpoint: "/fapi/v2/positionRisk",
