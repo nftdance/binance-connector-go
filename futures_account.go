@@ -3,6 +3,7 @@ package binance_connector
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -633,6 +634,21 @@ func (s *FuturesGetIncomeService) Do(ctx context.Context, opts ...RequestOption)
 	if s.symbol != "" {
 		r.setParam("symbol", s.symbol)
 	}
+	if s.incomeType != "" {
+		r.setParam("incomeType", s.incomeType)
+	}
+	if s.startTime != 0 {
+		r.setParam("startTime", fmt.Sprintf("%d", s.startTime))
+	}
+	if s.endTime != 0 {
+		r.setParam("endTime", fmt.Sprintf("%d", s.endTime))
+	}
+	if s.page != 0 {
+		r.setParam("page", fmt.Sprintf("%d", s.page))
+	}
+	if s.limit != 0 {
+		r.setParam("limit", fmt.Sprintf("%d", s.limit))
+	}
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return []*Income{}, err
@@ -641,6 +657,102 @@ func (s *FuturesGetIncomeService) Do(ctx context.Context, opts ...RequestOption)
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return []*Income{}, err
+	}
+	return res, nil
+}
+
+type FuturesUserTrades struct {
+	c          *Client
+	symbol     string
+	orderId    int64
+	startTime  int64
+	endTime    int64
+	fromId     int64
+	limit      int64
+	recvWindow int64
+}
+
+// Symbol set symbol
+func (s *FuturesUserTrades) Symbol(symbol string) *FuturesUserTrades {
+	s.symbol = symbol
+	return s
+}
+
+func (s *FuturesUserTrades) IncomeType(orderId int64) *FuturesUserTrades {
+	s.orderId = orderId
+	return s
+}
+
+func (s *FuturesUserTrades) StartTime(startTime int64) *FuturesUserTrades {
+	s.startTime = startTime
+	return s
+}
+
+func (s *FuturesUserTrades) EndTime(endTime int64) *FuturesUserTrades {
+	s.endTime = endTime
+	return s
+}
+
+func (s *FuturesUserTrades) FromId(fromId int64) *FuturesUserTrades {
+	s.fromId = fromId
+	return s
+}
+
+func (s *FuturesUserTrades) Limit(limit int64) *FuturesUserTrades {
+	s.limit = limit
+	return s
+}
+
+type UserTradesInfo struct {
+	Buyer           bool   `json:"buyer"`
+	Commission      string `json:"commission"`
+	CommissionAsset string `json:"commissionAsset"`
+	ID              int    `json:"id"`
+	Maker           bool   `json:"maker"`
+	OrderID         int    `json:"orderId"`
+	Price           string `json:"price"`
+	Qty             string `json:"qty"`
+	QuoteQty        string `json:"quoteQty"`
+	RealizedPnl     string `json:"realizedPnl"`
+	Side            string `json:"side"`
+	PositionSide    string `json:"positionSide"`
+	Symbol          string `json:"symbol"`
+	Time            int64  `json:"time"`
+}
+
+// Do send request
+func (s *FuturesUserTrades) Do(ctx context.Context, opts ...RequestOption) (res []*UserTradesInfo, err error) {
+	r := &request{
+		method:   http.MethodGet,
+		endpoint: "/fapi/v1/userTrades",
+		secType:  secTypeSigned,
+	}
+	if s.symbol != "" {
+		r.setParam("symbol", s.symbol)
+	}
+	if s.orderId != 0 {
+		r.setParam("orderId", fmt.Sprintf("%d", s.orderId))
+	}
+	if s.startTime != 0 {
+		r.setParam("startTime", fmt.Sprintf("%d", s.startTime))
+	}
+	if s.endTime != 0 {
+		r.setParam("endTime", fmt.Sprintf("%d", s.endTime))
+	}
+	if s.fromId != 0 {
+		r.setParam("fromId", fmt.Sprintf("%d", s.fromId))
+	}
+	if s.limit != 0 {
+		r.setParam("limit", fmt.Sprintf("%d", s.limit))
+	}
+	data, err := s.c.callAPI(ctx, r, opts...)
+	if err != nil {
+		return []*UserTradesInfo{}, err
+	}
+	res = make([]*UserTradesInfo, 0)
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return []*UserTradesInfo{}, err
 	}
 	return res, nil
 }
