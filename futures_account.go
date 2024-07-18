@@ -620,7 +620,7 @@ type Income struct {
 	Info       string `json:"info"`
 	Time       int64  `json:"time"`
 	TranID     string `json:"tranId"`
-	TradeID    int    `json:"tradeId"`
+	TradeID    string `json:"tradeId"`
 }
 
 // Do send request
