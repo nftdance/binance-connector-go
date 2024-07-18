@@ -177,6 +177,10 @@ func (c *Client) NewFuturesGetIncomeService() *FuturesGetIncomeService {
 	return &FuturesGetIncomeService{c: c}
 }
 
+func (c *Client) NewFuturesUserTradesService() *FuturesUserTradesService {
+	return &FuturesUserTradesService{c: c}
+}
+
 type FuturesCreateOrderService struct {
 	c                *Client
 	symbol           string
@@ -661,7 +665,7 @@ func (s *FuturesGetIncomeService) Do(ctx context.Context, opts ...RequestOption)
 	return res, nil
 }
 
-type FuturesUserTrades struct {
+type FuturesUserTradesService struct {
 	c          *Client
 	symbol     string
 	orderId    int64
@@ -673,32 +677,32 @@ type FuturesUserTrades struct {
 }
 
 // Symbol set symbol
-func (s *FuturesUserTrades) Symbol(symbol string) *FuturesUserTrades {
+func (s *FuturesUserTradesService) Symbol(symbol string) *FuturesUserTradesService {
 	s.symbol = symbol
 	return s
 }
 
-func (s *FuturesUserTrades) IncomeType(orderId int64) *FuturesUserTrades {
+func (s *FuturesUserTradesService) IncomeType(orderId int64) *FuturesUserTradesService {
 	s.orderId = orderId
 	return s
 }
 
-func (s *FuturesUserTrades) StartTime(startTime int64) *FuturesUserTrades {
+func (s *FuturesUserTradesService) StartTime(startTime int64) *FuturesUserTradesService {
 	s.startTime = startTime
 	return s
 }
 
-func (s *FuturesUserTrades) EndTime(endTime int64) *FuturesUserTrades {
+func (s *FuturesUserTradesService) EndTime(endTime int64) *FuturesUserTradesService {
 	s.endTime = endTime
 	return s
 }
 
-func (s *FuturesUserTrades) FromId(fromId int64) *FuturesUserTrades {
+func (s *FuturesUserTradesService) FromId(fromId int64) *FuturesUserTradesService {
 	s.fromId = fromId
 	return s
 }
 
-func (s *FuturesUserTrades) Limit(limit int64) *FuturesUserTrades {
+func (s *FuturesUserTradesService) Limit(limit int64) *FuturesUserTradesService {
 	s.limit = limit
 	return s
 }
@@ -721,7 +725,7 @@ type UserTradesInfo struct {
 }
 
 // Do send request
-func (s *FuturesUserTrades) Do(ctx context.Context, opts ...RequestOption) (res []*UserTradesInfo, err error) {
+func (s *FuturesUserTradesService) Do(ctx context.Context, opts ...RequestOption) (res []*UserTradesInfo, err error) {
 	r := &request{
 		method:   http.MethodGet,
 		endpoint: "/fapi/v1/userTrades",
