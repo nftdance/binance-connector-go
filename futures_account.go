@@ -172,6 +172,10 @@ func (c *Client) NewFuturesGetPositionRiskService() *FuturesGetPositionRiskServi
 	return &FuturesGetPositionRiskService{c: c}
 }
 
+func (c *Client) NewFuturesGetIncomeService() *FuturesGetIncomeService {
+	return &FuturesGetIncomeService{c: c}
+}
+
 type FuturesCreateOrderService struct {
 	c                *Client
 	symbol           string
@@ -564,4 +568,79 @@ type PositionRisk struct {
 	PositionSide     string `json:"positionSide"`
 	Notional         string `json:"notional"`
 	IsolatedWallet   string `json:"isolatedWallet"`
+}
+
+type FuturesGetIncomeService struct {
+	c          *Client
+	symbol     string
+	incomeType string
+	startTime  int64
+	endTime    int64
+	page       int64
+	limit      int64
+	recvWindow int64
+}
+
+// Symbol set symbol
+func (s *FuturesGetIncomeService) Symbol(symbol string) *FuturesGetIncomeService {
+	s.symbol = symbol
+	return s
+}
+
+func (s *FuturesGetIncomeService) IncomeType(incomeType string) *FuturesGetIncomeService {
+	s.incomeType = incomeType
+	return s
+}
+
+func (s *FuturesGetIncomeService) StartTime(startTime int64) *FuturesGetIncomeService {
+	s.startTime = startTime
+	return s
+}
+
+func (s *FuturesGetIncomeService) EndTime(endTime int64) *FuturesGetIncomeService {
+	s.endTime = endTime
+	return s
+}
+
+func (s *FuturesGetIncomeService) Page(page int64) *FuturesGetIncomeService {
+	s.page = page
+	return s
+}
+
+func (s *FuturesGetIncomeService) Limit(limit int64) *FuturesGetIncomeService {
+	s.limit = limit
+	return s
+}
+
+type Income struct {
+	Symbol     string `json:"symbol"`
+	IncomeType string `json:"incomeType"`
+	Income     string `json:"income"`
+	Asset      string `json:"asset"`
+	Info       string `json:"info"`
+	Time       int64  `json:"time"`
+	TranID     string `json:"tranId"`
+	TradeID    int    `json:"tradeId"`
+}
+
+// Do send request
+func (s *FuturesGetIncomeService) Do(ctx context.Context, opts ...RequestOption) (res []*Income, err error) {
+	r := &request{
+		method:   http.MethodGet,
+		endpoint: "/fapi/v1/income",
+		secType:  secTypeSigned,
+	}
+	if s.symbol != "" {
+		r.setParam("symbol", s.symbol)
+	}
+	data, err := s.c.callAPI(ctx, r, opts...)
+	if err != nil {
+		return []*Income{}, err
+	}
+	res = make([]*Income, 0)
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return []*Income{}, err
+	}
+	return res, nil
 }
