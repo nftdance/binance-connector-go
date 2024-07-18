@@ -682,7 +682,7 @@ func (s *FuturesUserTradesService) Symbol(symbol string) *FuturesUserTradesServi
 	return s
 }
 
-func (s *FuturesUserTradesService) IncomeType(orderId int64) *FuturesUserTradesService {
+func (s *FuturesUserTradesService) OrderID(orderId int64) *FuturesUserTradesService {
 	s.orderId = orderId
 	return s
 }
