@@ -181,6 +181,10 @@ func (c *Client) NewFuturesUserTradesService() *FuturesUserTradesService {
 	return &FuturesUserTradesService{c: c}
 }
 
+func (c *Client) NewFuturesDeleteOrderService() *FuturesDeleteOrderService {
+	return &FuturesDeleteOrderService{c: c}
+}
+
 type FuturesCreateOrderService struct {
 	c                *Client
 	symbol           string
@@ -757,6 +761,89 @@ func (s *FuturesUserTradesService) Do(ctx context.Context, opts ...RequestOption
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return []*UserTradesInfo{}, err
+	}
+	return res, nil
+}
+
+type FuturesDeleteOrderService struct {
+	c             *Client
+	symbol        string
+	orderID       int64
+	clientOrderID string
+	recvWindow    int64
+}
+
+func (s *FuturesDeleteOrderService) Symbol(symbol string) *FuturesDeleteOrderService {
+	s.symbol = symbol
+	return s
+}
+
+func (s *FuturesDeleteOrderService) OrderID(orderId int64) *FuturesDeleteOrderService {
+	s.orderID = orderId
+	return s
+}
+
+func (s *FuturesDeleteOrderService) ClientOrderID(clientOrderId string) *FuturesDeleteOrderService {
+	s.clientOrderID = clientOrderId
+	return s
+}
+
+func (s *FuturesDeleteOrderService) RecvWindow(recvWindow int64) *FuturesDeleteOrderService {
+	s.recvWindow = recvWindow
+	return s
+}
+
+type CancelOrderInfo struct {
+	ClientOrderID           string `json:"clientOrderId"`
+	CumQty                  string `json:"cumQty"`
+	CumQuote                string `json:"cumQuote"`
+	ExecutedQty             string `json:"executedQty"`
+	OrderID                 int    `json:"orderId"`
+	OrigQty                 string `json:"origQty"`
+	Price                   string `json:"price"`
+	ReduceOnly              bool   `json:"reduceOnly"`
+	Side                    string `json:"side"`
+	PositionSide            string `json:"positionSide"`
+	Status                  string `json:"status"`
+	StopPrice               string `json:"stopPrice"`
+	ClosePosition           bool   `json:"closePosition"`
+	Symbol                  string `json:"symbol"`
+	TimeInForce             string `json:"timeInForce"`
+	OrigType                string `json:"origType"`
+	Type                    string `json:"type"`
+	ActivatePrice           string `json:"activatePrice"`
+	PriceRate               string `json:"priceRate"`
+	UpdateTime              int64  `json:"updateTime"`
+	WorkingType             string `json:"workingType"`
+	PriceProtect            bool   `json:"priceProtect"`
+	PriceMatch              string `json:"priceMatch"`
+	SelfTradePreventionMode string `json:"selfTradePreventionMode"`
+	GoodTillDate            int    `json:"goodTillDate"`
+}
+
+func (s *FuturesDeleteOrderService) Do(ctx context.Context, opts ...RequestOption) (res *CancelOrderInfo, err error) {
+	r := &request{
+		method:   http.MethodDelete,
+		endpoint: "/fapi/v1/order",
+		secType:  secTypeSigned,
+	}
+	if s.symbol != "" {
+		r.setParam("symbol", s.symbol)
+	}
+	if s.orderID > 0 {
+		r.setParam("orderId", fmt.Sprintf("%d", s.orderID))
+	}
+	if s.clientOrderID != "" {
+		r.setParam("origClientOrderId", s.clientOrderID)
+	}
+	data, err := s.c.callAPI(ctx, r, opts...)
+	if err != nil {
+		return &CancelOrderInfo{}, err
+	}
+	res = new(CancelOrderInfo)
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return &CancelOrderInfo{}, err
 	}
 	return res, nil
 }
