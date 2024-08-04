@@ -16,7 +16,7 @@ func (c *Client) NewFuturesExchangeInfoService() *FuturesExchangeInfoService {
 }
 
 // Do send request
-func (s *FuturesExchangeInfoService) Do(ctx context.Context, opts ...RequestOption) (res *ExchangeInfo, err error) {
+func (s *FuturesExchangeInfoService) Do(ctx context.Context, opts ...RequestOption) (res *FuturesExchangeInfo, err error) {
 	r := &request{
 		method:   http.MethodGet,
 		endpoint: "/fapi/v1/exchangeInfo",
@@ -26,7 +26,7 @@ func (s *FuturesExchangeInfoService) Do(ctx context.Context, opts ...RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	res = new(ExchangeInfo)
+	res = new(FuturesExchangeInfo)
 	err = json.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
